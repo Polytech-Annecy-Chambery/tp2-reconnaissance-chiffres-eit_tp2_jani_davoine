@@ -23,7 +23,7 @@ class Image:
 
 
     def load(self, file_name):
-        """ Lecture d'un image a partir d'un fichier de nom "file_name"""
+        """ Lecture d'une image a partir d'un fichier de nom "file_name"""
         self.pixels = io.imread(file_name)
         self.H,self.W = self.pixels.shape 
         print("lecture image : " + file_name + " (" + str(self.H) + "x" + str(self.W) + ")")
@@ -47,7 +47,17 @@ class Image:
     #   on retourne une nouvelle image binarisee
     #==============================================================================
     def binarisation(self, S):
-        pass
+        
+        im_bin = Image()
+        im_bin.set_pixels(np.zeros((self.H, self.W),dtype=np.uint8))
+        
+        for i in range (self.H):
+            for j in range (self.W):
+                if self.pixels[i][j] >= S :
+                    im_bin.pixels[i][j] = 255
+                else :
+                    im_bin.pixels[i][j] = 0
+        return im_bin
 
 
     #==============================================================================
@@ -59,18 +69,59 @@ class Image:
     #   on retourne une nouvelle image recadree
     #==============================================================================
     def localisation(self):
-        pass
+        c_min = 100000 
+        c_max = 0
+        l_min = 0
+        l_max = 100000
+        im_bin=Image()
+        im_bin.set_pixels(self.pixels)
+        
+        for i in range (self.H):
+           for j in range (self.W):
+               if self.pixels[i][j] == 0 and j < c_min:
+                   c_min = j
+                  
+        for i in range (self.H-1,0,-1):
+            for j in range (self.W-1,0,-1):
+                if self.pixels[i][j] == 0 and j > c_max:
+                   c_max = j
+                   
+        for j in range (self.W-1,0,-1):
+           for i in range (self.H-1,0,-1):
+               if self.pixels[i][j] == 0 and i > l_min:
+                   l_min = i
+                   
+        for j in range (self.W):
+           for i in range (self.H):
+               if self.pixels[i][j] == 0 and i < l_max:
+                   l_max = i 
+        print(c_max,c_min,l_max,l_min)
+        
+        im_bin.pixels=im_bin.pixels[l_max:l_min,c_min:c_max]
+        return im_bin
+               
 
     #==============================================================================
     # Methode de redimensionnement d'image
     #==============================================================================
-    def resize(self, new_H, new_W):
-        pass
-
+    def resize(self,new_H,new_W):
+        im_res=Image()
+        im_res.pixels=resize(self.pixels,(new_H,new_W),0)
+        im_res.pixels=np.uint8(im_res.pixels*255)
+        im_res.H = new_H
+        im_res.W = new_W
+        return im_res
+ 
 
     #==============================================================================
     # Methode de mesure de similitude entre l'image self et un modele im
     #==============================================================================
-    def similitude(self, im):
-        pass
-
+    def similitude(self,image):
+        pixel_id=0
+        im_sim=Image()
+        im_sim.pixels=resize(image.pixels,(self.H,self.W),0)
+        for i in range(self.H):
+            for j in range(self.W):
+                if self.pixels[i][j]==im_sim.pixels[i][j]:
+                    pixel_id+=1       
+        return (pixel_id/(self.H*self.W))
