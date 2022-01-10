@@ -12,7 +12,7 @@ Copyright (c) 2021 Université Savoie Mont-Blanc
 import matplotlib.pyplot as plt
 from image import Image
 from reconnaissance import reconnaissance_chiffre, lecture_modeles
-
+import numpy as np
 
 if __name__ == '__main__':
 
@@ -24,13 +24,15 @@ if __name__ == '__main__':
     # Lecture image et affichage
     #==============================================================================
     image = Image()
-    image.load(path_to_assets + 'test2.JPG')
+    image.load(path_to_assets + 'test3.JPG')
     image.display("Exemple d'image")
+
 
     #==============================================================================
     # Binarisation de l'image et affichage
     #==============================================================================
-    S = 70
+    S = 254
+    
     image_binarisee = image.binarisation(S)
     image_binarisee.display("Image binarisee")
 
@@ -43,12 +45,12 @@ if __name__ == '__main__':
     #==============================================================================
     # Redimensionnement de l'image et affichage
     #==============================================================================
-    image_resizee = image_localisee.resize(100, 500)
+    image_resizee = image_localisee.resize(35,35)
     image_resizee.display("Image redimensionee")
-
+ 
     #==============================================================================
     # Lecture modeles et reconnaissance
     #==============================================================================
-    liste_modeles = lecture_modeles(path_to_assets)
-    chiffre = reconnaissance_chiffre(image, liste_modeles, 70)
-    print("Le chiffre reconnu est : ", chiffre)
+    liste_modeles=lecture_modeles(path_to_assets)
+    chiffre=reconnaissance_chiffre(image,liste_modeles,70)
+    print("Le chiffre reconnu est : ",chiffre)
